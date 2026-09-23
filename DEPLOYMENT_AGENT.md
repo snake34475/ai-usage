@@ -1,8 +1,25 @@
 # Cloud deployment instructions for AI Usage Dashboard
 
-You are deploying a small personal dashboard. Prefer a **local-build, cloud-run** release. Do not compile the React application on the cloud server unless the supplied artifacts are missing.
+You are deploying a small personal dashboard. There are two valid release modes. **Choose Mode B by default when you only have access to the GitHub repository**, because Git deliberately does not contain the generated `dist` directories.
 
-## Required release artifacts
+## Choose one release mode before deployment
+
+### Mode A — artifact release
+
+Use this only when the release owner has separately uploaded the locally built `web/dist` and `server/dist` directories over a secure channel. Do not expect these directories to be available from GitHub.
+
+### Mode B — repository build on the cloud host (default)
+
+Use this when the server agent is given the GitHub repository. Clone or pull the repository, create the private `server/.env` separately, then run:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm build
+```
+
+This produces `web/dist` and `server/dist` on the cloud host. The Web server still serves only `web/dist`; source files are never public. After building, the agent may retain the installed dependencies for this small private project, or prune to production dependencies only if that is compatible with the host's pnpm workspace setup. Do not delete `server/.env` when updating the repository.
+
+## Required artifact release contents (Mode A only)
 
 The release source machine runs `pnpm build` first. Receive these artifacts over a secure channel:
 
@@ -13,7 +30,7 @@ server/package.json       Server runtime dependency manifest
 server/.env               Private persistent runtime credentials (never log or commit)
 ```
 
-`web/src`, `server/src`, repository `.git`, and local `node_modules` are not needed by the running server.
+`web/src`, `server/src`, repository `.git`, and local `node_modules` are not needed by a Mode A runtime release.
 
 ## Target layout
 
@@ -39,8 +56,9 @@ Do not put `.env` under `/var/www`. Do not serve it through the web server.
 ## Server runtime setup
 
 1. Create the directories with a dedicated non-root deployment user.
-2. Upload the release artifacts securely. Set `.env` to mode `0600` and make it owned by the Node service user.
-3. From `/opt/ai-usage/server`, install only runtime dependencies:
+2. In Mode A, upload the release artifacts securely. In Mode B, clone the repository into a non-public application directory and build it there.
+3. Create or upload `server/.env` by a secure channel. Set it to mode `0600` and make it owned by the Node service user. Never obtain it from Git.
+4. For Mode A, from `/opt/ai-usage/server`, install runtime dependencies:
 
    ```bash
    pnpm install --prod
@@ -48,14 +66,14 @@ Do not put `.env` under `/var/www`. Do not serve it through the web server.
 
    Do not install frontend dependencies on the cloud server.
 
-4. Run the compiled process with the working directory set to `/opt/ai-usage/server`:
+5. Run the compiled process with the working directory set to the directory containing `server/.env`:
 
    ```bash
    node dist/index.js
    ```
 
-5. Create a systemd (or existing service-manager) unit that restarts on failure. Its `WorkingDirectory` must be `/opt/ai-usage/server` because the server persists rotated TRAE credentials into `.env`.
-6. Bind the Node service only to private/local access where possible. Do not expose port 3000 directly to the public internet.
+6. Create a systemd (or existing service-manager) unit that restarts on failure. Its `WorkingDirectory` must be the `server` directory because the server persists rotated TRAE credentials into `.env`.
+7. Bind the Node service only to private/local access where possible. Do not expose port 3000 directly to the public internet.
 
 ## Reverse proxy and static files
 
