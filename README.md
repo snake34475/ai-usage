@@ -54,6 +54,8 @@ Do not create any `VITE_OPENCODE_GO_API_KEY`, `VITE_WORKBUDDY_ACCESS_TOKEN`, or 
 
 ## Deploy to a server
 
+For a cloud-agent-ready, artifact-only deployment checklist, see [DEPLOYMENT_AGENT.md](DEPLOYMENT_AGENT.md). The recommended release mode is to build locally and upload only `web/dist` plus compiled Server artifacts; the cloud host installs Server production dependencies and does not build the React app.
+
 The Web and Server should use one HTTPS origin:
 
 ```text
