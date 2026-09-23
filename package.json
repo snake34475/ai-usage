@@ -1,0 +1,15 @@
+{
+  "name": "ai-usage",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n server,web -c blue,magenta \"pnpm --dir server dev\" \"pnpm --dir web dev\"",
+    "trae:login": "pnpm --dir server trae:login",
+    "build": "pnpm --dir server build && pnpm --dir web build",
+    "start": "pnpm --dir server start",
+    "check": "pnpm --dir server check && pnpm --dir web check"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
