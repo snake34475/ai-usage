@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { timingSafeEqual } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import cors from '@fastify/cors'
 import dotenv from 'dotenv'
@@ -52,10 +53,22 @@ async function refreshUsage(): Promise<void> {
   return refreshInFlight
 }
 
+function tokenMatches(actual: string | undefined, expected: string): boolean {
+  if (!actual) return false
+  const actualBytes = Buffer.from(actual)
+  const expectedBytes = Buffer.from(`Bearer ${expected}`)
+  return actualBytes.length === expectedBytes.length && timingSafeEqual(actualBytes, expectedBytes)
+}
+
 app.addHook('onRequest', async (request, reply) => {
+  const pathname = new URL(request.raw.url ?? '/', 'http://localhost').pathname
+  if (pathname === '/api/health') return
+
   const dashboardToken = process.env.DASHBOARD_TOKEN
-  if (!dashboardToken || request.url === '/api/health') return
-  if (request.headers.authorization !== `Bearer ${dashboardToken}`) {
+  if (!dashboardToken) {
+    return reply.code(503).send({ error: 'DASHBOARD_TOKEN is not configured' })
+  }
+  if (!tokenMatches(request.headers.authorization, dashboardToken)) {
     return reply.code(401).send({ error: 'Unauthorized' })
   }
 })

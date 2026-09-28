@@ -10,6 +10,12 @@ A deliberately small personal dashboard for OpenCode Go, WorkBuddy, and TRAE Wor
 
 Open the dashboard at http://localhost:5173. The API listens at http://localhost:3000.
 
+Set a long, random `DASHBOARD_TOKEN` in `server/.env`. Every API route except
+`/api/health` requires `Authorization: Bearer <DASHBOARD_TOKEN>`. The browser
+must not contain that value: for the web dashboard, use a protected reverse
+proxy that authenticates the browser and injects the header when forwarding to
+the local Node server. Private widgets can send the header directly.
+
 ## Providers
 
 - OpenCode Go: `GET https://opencode.ai/zen/go/v1/usage` with `Authorization: Bearer <API key>`. It returns and the dashboard displays all three actual quota windows: rolling 5 hours, weekly, and monthly. It does not expose a natural-day window.
@@ -50,7 +56,7 @@ The server uses a 10-second upstream timeout, refreshes the in-memory cache ever
 
 ## Security
 
-Do not create any `VITE_OPENCODE_GO_API_KEY`, `VITE_WORKBUDDY_ACCESS_TOKEN`, or `VITE_TRAE_WORK_ACCESS_TOKEN` variables. For a public deployment, protect the dashboard at the reverse-proxy or access-gateway layer (for example Nginx/Caddy auth, Cloudflare Access, or Tailscale). Do not put `DASHBOARD_TOKEN` into the React app: the browser would expose it.
+Do not create any `VITE_OPENCODE_GO_API_KEY`, `VITE_WORKBUDDY_ACCESS_TOKEN`, `VITE_TRAE_WORK_ACCESS_TOKEN`, or `VITE_DASHBOARD_TOKEN` variables. For a public deployment, protect the dashboard at the reverse-proxy or access-gateway layer (for example Nginx/Caddy auth, Cloudflare Access, or Tailscale). Do not put `DASHBOARD_TOKEN` into the React app: the browser would expose it. Configure the reverse proxy to inject `Authorization: Bearer <DASHBOARD_TOKEN>` only on the localhost upstream connection.
 
 ## Deploy to a server
 
