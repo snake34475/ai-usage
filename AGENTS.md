@@ -17,6 +17,7 @@ This is a small personal dashboard. Keep the architecture to Fastify Server + Re
 - `OpenCodeProvider` is API-key based.
 - `WorkBuddyResourceProvider` uses the desktop-login state locally, synchronizing only access token and domain into `server/.env`; in cloud environments it uses those env values. Do not assume or implement a WorkBuddy refresh endpoint without verifying it.
 - `TraeWorkProvider` uses the undocumented TRAE SOLO client flow. It may refresh an access token from `TRAE_WORK_REFRESH_TOKEN`, and therefore the process must have permission to atomically update `server/.env`. Do not add chat proxying, sign-in, or multi-account behavior from external reference projects.
+- `ZCodeProvider` queries the zcode.z.ai billing plane with `ZCODE_PLAN_JWT` from `pnpm zcode:login`. No refresh endpoint is implemented: on 401/403 the card errors and the user reruns the login script. `ZCODE_DEVICE_MID` is generated once and synced into `server/.env`.
 
 ## Validation
 
