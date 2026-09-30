@@ -17,7 +17,7 @@ function safePercent(value: number): number {
   return Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : 0
 }
 
-const providerNames: Record<string, string> = { opencode: 'OpenCode Go', workbuddy: 'WorkBuddy', 'trae-work': 'TRAE Work' }
+const providerNames: Record<string, string> = { opencode: 'OpenCode Go', workbuddy: 'WorkBuddy', 'trae-work': 'TRAE Work', zcode: 'ZCode (GLM)' }
 
 export default function App() {
   const [data, setData] = useState<UsageResponse | null>(null)

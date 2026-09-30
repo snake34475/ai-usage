@@ -4,10 +4,11 @@ const titles: Record<string, string> = {
   opencode: 'OpenCode Go',
   workbuddy: 'WorkBuddy AI 额度',
   'trae-work': 'TRAE Work',
+  zcode: 'ZCode GLM 额度',
 }
 
-const providerClass: Record<string, string> = { opencode: 'opencode', workbuddy: 'workbuddy', 'trae-work': 'trae' }
-const providerIcon: Record<string, string> = { opencode: 'O', workbuddy: 'W', 'trae-work': 'T' }
+const providerClass: Record<string, string> = { opencode: 'opencode', workbuddy: 'workbuddy', 'trae-work': 'trae', zcode: 'zcode' }
+const providerIcon: Record<string, string> = { opencode: 'O', workbuddy: 'W', 'trae-work': 'T', zcode: 'Z' }
 
 function relativeTime(iso: string): string {
   const seconds = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000))

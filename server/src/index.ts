@@ -7,6 +7,7 @@ import Fastify from 'fastify'
 import { OpenCodeProvider } from './providers/opencode.js'
 import { TraeWorkProvider } from './providers/trae-work.js'
 import { WorkBuddyResourceProvider } from './providers/workbuddy-resource.js'
+import { ZCodeProvider } from './providers/zcode.js'
 import { errorUsage, now, type Usage, type UsageProvider } from './usage.js'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -18,7 +19,7 @@ dotenv.config({ path: path.resolve(here, '../.env') })
 const app = Fastify({ logger: true })
 await app.register(cors, { origin: ['http://localhost:5173'] })
 
-const providers: UsageProvider[] = [new OpenCodeProvider(), new WorkBuddyResourceProvider(), new TraeWorkProvider()]
+const providers: UsageProvider[] = [new OpenCodeProvider(), new WorkBuddyResourceProvider(), new TraeWorkProvider(), new ZCodeProvider()]
 let usageCache: Usage[] = []
 let lastRefreshAt: string | null = null
 let refreshInFlight: Promise<void> | null = null
@@ -27,6 +28,7 @@ let lastManualRefreshMs = 0
 function providerName(provider: UsageProvider): string {
   if (provider instanceof OpenCodeProvider) return 'opencode'
   if (provider instanceof WorkBuddyResourceProvider) return 'workbuddy'
+  if (provider instanceof ZCodeProvider) return 'zcode'
   return 'trae-work'
 }
 

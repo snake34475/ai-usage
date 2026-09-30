@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "trae:login": "tsx src/scripts/trae-login.ts",
+    "zcode:login": "tsx src/scripts/zcode-login.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "check": "tsc --noEmit -p tsconfig.json"
